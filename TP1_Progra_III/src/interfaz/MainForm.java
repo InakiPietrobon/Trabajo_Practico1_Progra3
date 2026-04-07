@@ -83,7 +83,6 @@ public class MainForm {
 //			System.out.println("perdiste");
 //		}
 		
-		
 //		hola.setSelectedTextColor(Color.black);
 //		hola.setText("hola");
 	}
