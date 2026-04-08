@@ -9,6 +9,8 @@ import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JInternalFrame;
 import java.awt.GridLayout;
+import java.awt.Window;
+
 import javax.swing.JTextPane;
 import javax.swing.text.StyleConstants;
 import javax.swing.JComboBox;
@@ -17,6 +19,7 @@ import javax.swing.JButton;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.PropertyVetoException;
 import java.security.Key;
 import java.text.NumberFormat.Style;
 
@@ -40,16 +43,18 @@ import javax.swing.JSeparator;
 public class MainForm {
 
 	private JFrame frmWordle;
+	
 	private JTextField textoUsuario1;
 	private JTextField textoImpreso1;
-	private JTextPane hola;
 	
-	private boolean palabraCorrecta = true;
-	private boolean ganaste = false;
-	private boolean perdiste = false;
+	private JTextField letrasCorrectas;
+	private JTextField letrasIncorrectas;
+	private JTextField letrasCasiCorrectas;
+	
+	private static boolean palabraCorrecta = true;
+
 	private String palabra = "aeio";
-	private JTextField textField;
-	private JTextField textField_1;
+
 
 	/**
 	 * Launch the application.
@@ -57,6 +62,7 @@ public class MainForm {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				
 				try {
 					MainForm window = new MainForm();
 					window.frmWordle.setVisible(true);
@@ -73,18 +79,8 @@ public class MainForm {
 	
 	public MainForm() {
 
-		
 		initialize();
-		
-//		conseguir(textoUsuario1);
-		
-		
-//		if(palabraCorrecta) {
-//			System.out.println("perdiste");
-//		}
-		
-//		hola.setSelectedTextColor(Color.black);
-//		hola.setText("hola");
+			
 	}
 
 	/**
@@ -95,12 +91,14 @@ public class MainForm {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private void initialize() {
+		
 		frmWordle = new JFrame();
 		frmWordle.getContentPane().setEnabled(false);
 		frmWordle.setTitle("Wordle");
 		frmWordle.setBounds(100, 100, 687, 589);
 		frmWordle.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmWordle.getContentPane().setLayout(null);
+		
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		////TUTORIAL
@@ -125,15 +123,15 @@ public class MainForm {
 		textoImpreso1 = new JTextField();
 		textoImpreso1.setFocusable(false);
 		textoImpreso1.setVisible(false);
-		textoImpreso1.setBounds(299, 85, 109, 32);
+		textoImpreso1.setBounds(174, 85, 109, 32);
 		frmWordle.getContentPane().add(textoImpreso1);
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		////TEXTO DONDE ESCRIBE EL USUARIO
 		//
 		textoUsuario1 = new JTextField();	
-		textoUsuario1.setBackground(new Color(0, 128, 255));
-		textoUsuario1.setBounds(299, 283, 109, 32);
+		textoUsuario1.setBackground(Color.gray);
+		textoUsuario1.setBounds(174, 308, 109, 32);
 		frmWordle.getContentPane().add(textoUsuario1);
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,9 +142,28 @@ public class MainForm {
 			}
 		});
 		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////LETRAS
+		//
 		
-		//textoImpreso1.setForeground(Color.gray);
-			//textoImpreso1.setText(texto + cantidadLetras.charAt(i));	
+		letrasCorrectas = new JTextField();		
+		letrasCorrectas.setFocusable(false);
+		letrasCorrectas.setBounds(561,85,100,69);
+		letrasCorrectas.setBackground(Color.green);;
+		frmWordle.getContentPane().add(letrasCorrectas);
+		
+		letrasCasiCorrectas = new JTextField();		
+		letrasCasiCorrectas.setFocusable(false);
+		letrasCasiCorrectas.setBounds(561,245,100,69);
+		letrasCasiCorrectas.setBackground(Color.yellow);
+		frmWordle.getContentPane().add(letrasCasiCorrectas);
+		
+		letrasIncorrectas = new JTextField();		
+		letrasIncorrectas.setFocusable(false);
+		letrasIncorrectas.setBounds(561,165,100,69);
+		letrasIncorrectas.setBackground(Color.red);
+		frmWordle.getContentPane().add(letrasIncorrectas);
+
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,77 +177,70 @@ public class MainForm {
 		//	System.out.println(detectarBoton(e));
 			String cantidadLetras = textoUsuario1.getText();
 			
-			if(detectarEnter(e) && cantidadLetras.length() < 4 || cantidadLetras.length() > 4) {
+			if(detectarEnter(e) && cantidadLetras.length() < 4) {
 				textoUsuario1.setText(cantidadLetras);
 				ventanaAdvertencia();
 			}
 			
 			if(!detectarEnter(e) && cantidadLetras.length() > 3) {
-				textoUsuario1.setText("");
+				textoUsuario1.setText(null);
 				ventanaAdvertencia();
 			}
 				
 			if(detectarEnter(e) && cantidadLetras.length() == 4) {
-//				textoUsuario1.setEditable(false);
-//				textoUsuario1.setEnabled(false);
 				textoUsuario1.setText(null);
 			
 				for(int i = 0; i < cantidadLetras.length(); i++) {
 					if(cantidadLetras.charAt(i) == palabra.charAt(i)) {
-						palabraCorrecta = true;
-					}
-					else {
-						palabraCorrecta = false;
-						if(checkCaracteres(cantidadLetras, i)) {
-							textoImpreso1.setForeground(Color.yellow);
-						}
-						else {
-							cantidadLetras.equals(palabra);
-							textoImpreso1.setForeground(Color.red);
-						}
-						
-					}
-					if(palabraCorrecta) {
+						letrasCorrectas.setText(letrasCorrectas.getText() + cantidadLetras.charAt(i) + ", ");
 						textoImpreso1.setForeground(Color.green);
 					}
-					textoImpreso1.setVisible(true);
-					textoImpreso1.setText(cantidadLetras);
+					else {
+						palabraCorrecta = palabraCorrecta && false;
+						if(checkCaracteres(cantidadLetras, i)) {
+//							textoImpreso1.setForeground(Color.yellow);
+							letrasCasiCorrectas.setText(letrasCasiCorrectas.getText() + cantidadLetras.charAt(i) + ", ");
+						}
+						else {
+							letrasIncorrectas.setText(letrasIncorrectas.getText() + cantidadLetras.charAt(i) + ", ");
+//							textoImpreso1.setForeground(Color.red);
+						}
+						
+										
+					}
 					
-				}		
-			}		
+				}	
+				if(palabraCorrecta) {
+					System.out.print("es la palabra /break");
+					
+				}	
+				if(!palabraCorrecta) {
+					System.out.print("no es la palabra ");
+				}
+				textoImpreso1.setVisible(true);
+				textoImpreso1.setText(cantidadLetras);
+			}	
+			palabraCorrecta = true;
 		}	
 	
 	private void ventanaAdvertencia() {
 			
-			JInternalFrame internalFrame = new JInternalFrame("Explicacion Modo de Juego");
-			internalFrame.setBounds(100, 100, 200, 50);
-			internalFrame.setClosable(true);
-			internalFrame.setToolTipText("advertencia");
-			frmWordle.getContentPane().add(internalFrame);
+			JInternalFrame FrameAdvertencia = new JInternalFrame("Advertencia");
+			FrameAdvertencia.setBounds(100, 100, 200, 50);
+			FrameAdvertencia.setClosable(true);
+			FrameAdvertencia.setToolTipText("advertencia");
+			frmWordle.getContentPane().add(FrameAdvertencia);
 			
 			
 			JLabel lblNewLabel = new JLabel("Tienen que ser 4 caracteres");
-			internalFrame.getContentPane().add(lblNewLabel, BorderLayout.NORTH);
+			FrameAdvertencia.getContentPane().add(lblNewLabel, BorderLayout.NORTH);
 			lblNewLabel.setToolTipText("AVISO");
 			
+			FrameAdvertencia.setVisible(true);
 			
-			internalFrame.setVisible(true);
+			
 	
 		}
-	
-	
-	private void agregarTextoUsuario() {
-		
-		
-		textoUsuario1 = new JFormattedTextField();
-		textoUsuario1.setBounds(100, 100, 100, 100);
-		frmWordle.getContentPane().add(textoUsuario1);
-		
-	}
-	
-	
-
-	
 	
 	//SI ESTA EL CARACTER ESTA EN LA PALABRA ES TRUE SI NO ES FALSE
 		private boolean checkCaracteres(String cadena, int i) {
