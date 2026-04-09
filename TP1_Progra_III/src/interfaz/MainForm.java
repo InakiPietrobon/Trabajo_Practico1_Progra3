@@ -41,7 +41,9 @@ import java.awt.event.FocusEvent;
 import javax.swing.JSeparator;
 
 public class MainForm {
-
+	
+	
+	
 	private JFrame frmWordle;
 	
 	private JTextField textoUsuario1;
@@ -53,9 +55,9 @@ public class MainForm {
 	
 	private static boolean palabraCorrecta = true;
 
-	private String palabra = "aeio";
-
-
+	ListaPalabras palabraRandom = new ListaPalabras();
+	String palabra;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -78,7 +80,8 @@ public class MainForm {
 	 */
 	
 	public MainForm() {
-
+		
+		palabra = palabraRandom.obtenerPalabraAleatoria();
 		initialize();
 			
 	}
@@ -138,7 +141,7 @@ public class MainForm {
 
 		textoUsuario1.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
-				algo(e);
+				leerTecla(e);
 			}
 		});
 		
@@ -173,7 +176,8 @@ public class MainForm {
 		
 	}
 	
-		public void algo(KeyEvent e) {
+		//CREAR OTRAS FUNCIONES Y QUE ESTA NO HAGA TODO, SI ES POSIBLE PASAR A OTRAS CLASES E IR ORGANIZANDO
+		public void leerTecla(KeyEvent e) {
 		//	System.out.println(detectarBoton(e));
 			String cantidadLetras = textoUsuario1.getText();
 			
@@ -192,17 +196,17 @@ public class MainForm {
 			
 				for(int i = 0; i < cantidadLetras.length(); i++) {
 					if(cantidadLetras.charAt(i) == palabra.charAt(i)) {
-						letrasCorrectas.setText(letrasCorrectas.getText() + cantidadLetras.charAt(i) + ", ");
+						letrasCorrectas.setText(letrasCorrectas.getText() + cantidadLetras.charAt(i) + " ");
 						textoImpreso1.setForeground(Color.green);
 					}
 					else {
 						palabraCorrecta = palabraCorrecta && false;
 						if(checkCaracteres(cantidadLetras, i)) {
 //							textoImpreso1.setForeground(Color.yellow);
-							letrasCasiCorrectas.setText(letrasCasiCorrectas.getText() + cantidadLetras.charAt(i) + ", ");
+							letrasCasiCorrectas.setText(letrasCasiCorrectas.getText() + cantidadLetras.charAt(i) + " ");
 						}
 						else {
-							letrasIncorrectas.setText(letrasIncorrectas.getText() + cantidadLetras.charAt(i) + ", ");
+							letrasIncorrectas.setText(letrasIncorrectas.getText() + cantidadLetras.charAt(i) + " ");
 //							textoImpreso1.setForeground(Color.red);
 						}
 						
@@ -262,4 +266,6 @@ public class MainForm {
 			return bandera;
 		}
 		
+	
+
 }
