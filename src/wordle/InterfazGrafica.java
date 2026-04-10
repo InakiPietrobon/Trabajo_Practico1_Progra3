@@ -93,16 +93,26 @@ public class InterfazGrafica {
         });
 	}
 	
-	/* Este método conecta la interfaz con la lógica. 
-	 * Se encarga de pedir la validación y pintar los resultados. 
+	/* Este metodo conecta la interfaz con la logica. 
+	 * Se encarga de pedir la validación y pintar los resultados
 	 */
 	private void ejecutarIntento() {
 		String palabra = txtIngreso.getText().toUpperCase().trim();
 		
-		// Validación de longitud
+		// Validacion de longitud
 		if (palabra.length() != 5) {
 			JOptionPane.showMessageDialog(frame, "Debe ser de 5 letras"); 
 			return;
+		}
+		
+		// Validacion de caracteres
+		for (int i = 0; i < palabra.length(); i++) {
+			char letra = palabra.charAt(i);
+					
+			if (!Character.isLetter(letra)) {
+				JOptionPane.showMessageDialog(frame, "Solo se permiten letras, evite usar caracteres especiales o números"); 
+				return;
+			}
 		}
 		
 		// Llamamos a la lógica para obtener el estado de cada letra 
