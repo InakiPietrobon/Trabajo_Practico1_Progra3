@@ -12,7 +12,7 @@ public class LogicaJuego {
     private int intentosRestantes;
     private boolean juegoTerminado;
     private boolean victoria;
-    private String[] listaPalabras = {"PERRO", "CASAS", "GATOS", "PIANO", "LIBRO", "VERDE", "MUNDO"}; // Lista de palabras
+    private String[] listaPalabras = {"SILLA"}; // Lista de palabras
 
     public LogicaJuego() {
         Random rand = new Random();
