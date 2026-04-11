@@ -1,87 +1,109 @@
 package wordle;
 
-
-import java.util.ArrayList;
 import java.util.Random;
 
-/* Clase encargada de la lógica del juego
- * No contiene elementos visuales, solo manejo de datos */
 public class LogicaJuego {
-    private String palabraSecreta;
-    private int intentosRestantes;
-    private boolean juegoTerminado;
-    private boolean victoria;
-    private String[] listaPalabras = {"SILLA", "PATIO", "LUGAR", "SESOS", "TORTA", "PERRO", "LETRA"}; // Lista de palabras
+	
+	// Aca guardo las palabras separadas por idioma y cantidad de letras
+	private String[] esp5 = {"PERRO", "GATOS", "LAPIZ", "SILLA", "MANGO"};
+	private String[] esp8 = {"ELEFANTE", "MILANESA", "PANTALLA", "HELADERA"};
+	private String[] esp10 = {"MURCIELAGO", "CARPINTERO", "BICICLETA"};
 
-    public LogicaJuego() {
-        Random rand = new Random();
-        this.palabraSecreta = listaPalabras[rand.nextInt(listaPalabras.length)]; // Elije una palabra random
-        this.intentosRestantes = 6; // El usuario tiene 6 intentos
-        this.juegoTerminado = false;
-        this.victoria = false;
-    }
-    
-     // Procesa la palabra ingresada por el usuario y devuelve el estado de cada letra
-     public int[] arriesgarPalabra(String intento) {
-         intento = intento.toUpperCase();
-         int[] resultado = new int[5]; // 0: Gris, 1: Amarillo, 2: Verde         
-         /* Creamos una lista de letras que contiene de forma repetida todas las letras de la palabra:
-          * servira para saber cuantas letras de un mismo tipo existen en la palabra y
-          * de esta manera saber si ponerla en verde, amarillo o gris */
-         ArrayList<Character> letrasContenidas = new ArrayList<>();
-         
-         for (int i = 0; i < 5; i++) {
-             letrasContenidas.add(palabraSecreta.charAt(i));
-         }
-         
-         // Verificamos si el usuario gano
-         if (intento.equals(palabraSecreta)) {
-             victoria = true;
-             juegoTerminado = true; 
-         }
-         /** Dividimos en 2 ciclos la revisión de las letras con respecto a la palabra para evitar bugs dados
-          * por la falta de información de cuantas letras verdes existen
-          */
+	private String[] ing5 = {"APPLE", "HOUSE", "WATER", "BREAD"};
+	private String[] ing8 = {"ELEPHANT", "UMBRELLA", "BASEBALL"};
+	private String[] ing10 = {"APPEARANCE", "STRAWBERRY", "BASKETBALL"};
 
-         // Primera pasada: buscamos las letras verdes
-         for (int i = 0; i < 5; i++) { // Iteramos letra por letra
-             char letraIntento = intento.charAt(i);
-             if (letraIntento == palabraSecreta.charAt(i)) { // Verificamos si la letra ingresada coincide con la letra de la palabra del juego
-                 resultado[i] = 2; // Verde
-                 letrasContenidas.remove((Object) letraIntento); // Consumimos esa reserva (Casteamos a Object para que no tome letraIntento como un indice)
-             }
-         }
+	private String palabraSecreta;
+	private int intentosPermitidos;
+	private int longitudPalabra;
+	private boolean victoria;
+	private boolean juegoTerminado;
+	private int intentosUsados;
 
-         // Segunda pasada: buscamos las letras amarillas y grises
-         for (int i = 0; i < 5; i++) {
-             // Si en la pasada anterior ya lo marcamos en verde, lo ignoramos
-             if (resultado[i] == 2) {
-                 continue;
-             }
-             
-             char letraIntento = intento.charAt(i);
-             
-             // Verificamos si la letra ingresada esta contenida en la palabra
-             if (letrasContenidas.contains(letraIntento)) { // Lo hacemos sobre letrasContenidas para asegurarnos que no haya sido marcada
-                 resultado[i] = 1; // Amarillo
-                 letrasContenidas.remove((Object) letraIntento); // Consumimos esa reserva (Casteamos a Object para que no tome letraIntento como un indice)
-             } else {
-                 resultado[i] = 0; // Gris
-             }
-         }
-         
-         intentosRestantes--; // Consumimos un intento
-         if (intentosRestantes <= 0 && !victoria) { // Si se queda sin intentos, pierde
-        	 juegoTerminado = true; 
-         }
+	public void prepararPartida(String idioma, String dificultad) {
+		this.victoria = false;
+		this.juegoTerminado = false;
+		this.intentosUsados = 0;
+		String[] poolActual = null;
 
-         return resultado;
-     }
-    
+		// Configuro la cantidad de intentos y el largo de la palabra segun la dificultad
+		switch (dificultad) {
+			case "Fácil":
+				this.intentosPermitidos = 8;
+				this.longitudPalabra = 5;
+				break;
+			case "Normal":
+				this.intentosPermitidos = 5;
+				this.longitudPalabra = 8;
+				break;
+			case "Difícil":
+				this.intentosPermitidos = 3;
+				this.longitudPalabra = 10;
+				break;
+		}
 
-    // Metodos para que la interfaz consulte el estado actual
-    public int getIntentosRestantes() { return intentosRestantes; }
-    public boolean isJuegoTerminado() { return juegoTerminado; }
-    public boolean isVictoria() { return victoria; }
-    public String getPalabraSecreta() { return palabraSecreta; }
+		// Selecciono el arreglo de palabras correcto cruzando el idioma con la longitud
+		if (idioma.equals("Español")) {
+			if (longitudPalabra == 5) poolActual = esp5;
+			else if (longitudPalabra == 8) poolActual = esp8;
+			else poolActual = esp10;
+		} else {
+			if (longitudPalabra == 5) poolActual = ing5;
+			else if (longitudPalabra == 8) poolActual = ing8;
+			else poolActual = ing10;
+		}
+
+		Random rand = new Random();
+		this.palabraSecreta = poolActual[rand.nextInt(poolActual.length)];
+	}
+
+	public int[] arriesgarPalabra(String intento) {
+		int[] resultados = new int[longitudPalabra];
+		boolean aciertoTotal = true;
+		this.intentosUsados++;
+
+		// Cuento cuantas veces aparece cada letra en la palabra secreta para arreglar el bug de los amarillos
+		int[] letrasDisponibles = new int[256];
+		for (int i = 0; i < longitudPalabra; i++) {
+			letrasDisponibles[palabraSecreta.charAt(i)]++;
+		}
+
+		// Primera pasada: me fijo unicamente si hay aciertos exactos (verdes)
+		for (int i = 0; i < longitudPalabra; i++) {
+			char letraIntento = intento.charAt(i);
+			if (letraIntento == palabraSecreta.charAt(i)) {
+				resultados[i] = 2; // Marco como verde
+				letrasDisponibles[letraIntento]--; // Descuento esta letra de las disponibles
+			} else {
+				aciertoTotal = false;
+			}
+		}
+
+		// Segunda pasada: me fijo si hay letras correctas pero en mal lugar (amarillos)
+		for (int i = 0; i < longitudPalabra; i++) {
+			if (resultados[i] != 2) { 
+				char letraIntento = intento.charAt(i);
+				// Si la letra existe y todavia quedan disponibles, la marco en amarillo
+				if (letrasDisponibles[letraIntento] > 0) {
+					resultados[i] = 1; 
+					letrasDisponibles[letraIntento]--; 
+				} else {
+					resultados[i] = 0; // Gris porque no esta o ya se usaron todas
+				}
+			}
+		}
+
+		if (aciertoTotal) {
+			this.victoria = true;
+			this.juegoTerminado = true;
+		} else if (intentosUsados >= intentosPermitidos) {
+			this.juegoTerminado = true;
+		}
+
+		return resultados;
+	}
+
+	public boolean isVictoria() { return victoria; }
+	public boolean isJuegoTerminado() { return juegoTerminado; }
+	public String getPalabraSecreta() { return palabraSecreta; }
 }
