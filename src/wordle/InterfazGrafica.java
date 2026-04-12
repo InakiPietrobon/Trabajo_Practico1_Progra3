@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.Timer;
 
 public class InterfazGrafica {
 
@@ -26,6 +27,9 @@ public class InterfazGrafica {
 	private int filasTotales;
 	private int columnasTotales;
 	private String idiomaElegido;
+	private Timer temporizador;
+	private int segundosTranscurridos;
+	private JLabel lblTemporizador;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -90,83 +94,75 @@ public class InterfazGrafica {
 	}
 
 	private void mostrarMenuReglas() {
-		frame.getContentPane().removeAll();
-		
-		JLabel lblTitulo = new JLabel("REGLAS");
-		lblTitulo.setBounds(50, 50, 400, 30);
-		lblTitulo.setHorizontalAlignment(JLabel.CENTER);
-		frame.getContentPane().add(lblTitulo);
+	    frame.getContentPane().removeAll();
+	    
+	    // Definición de textos según idioma
+	    String titulo = idiomaElegido.equals("English") ? "RULES" : "REGLAS";
+	    String general = idiomaElegido.equals("English") ? "Guess the hidden word." : "Adivina la palabra oculta.";
+	    String verde = idiomaElegido.equals("English") ? "Green: correct letter and position." : "Verde: letra y posición correcta.";
+	    String amarillo = idiomaElegido.equals("English") ? "Yellow: correct letter, wrong position." : "Amarillo: letra correcta, posición incorrecta.";
+	    String gris = idiomaElegido.equals("English") ? "Gray: letter not in word." : "Gris: letra no contenida.";
+	    String boton = idiomaElegido.equals("English") ? "I understand (Press OK)" : "Entendido (Presione OK)";
 
-		JLabel lblTexto = new JLabel("Adivina la palabra oculta.");
-		lblTexto.setBounds(20, 90, 450, 30);
-		lblTexto.setHorizontalAlignment(JLabel.CENTER);
-		frame.getContentPane().add(lblTexto);
-		
-		JLabel lblTextoVerde = new JLabel("El color verde indica letra contenida y posición correcta.");
-		lblTextoVerde.setBounds(20, 120, 450, 30);
-		lblTextoVerde.setHorizontalAlignment(JLabel.CENTER);
-		frame.getContentPane().add(lblTexto);
-		
-		JLabel lblTextoAmarillo = new JLabel("El color amarillo indica letra contenida y posición incorrecta.");
-		lblTextoAmarillo.setBounds(20, 150, 450, 30);
-		lblTextoAmarillo.setHorizontalAlignment(JLabel.CENTER);
-		frame.getContentPane().add(lblTexto);
-		
-		JLabel lblTextoGris = new JLabel("El color gris indica letra no contenida y posición inexistente.");
-		lblTextoGris.setBounds(20, 180, 450, 30);
-		lblTextoGris.setHorizontalAlignment(JLabel.CENTER);
-		frame.getContentPane().add(lblTexto);
-		
-		JButton btnOk = new JButton("Entendido (Presione OK)");
-		btnOk.setBounds(150, 300, 200, 40);
-		btnOk.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mostrarMenuDificultad();
-			}
-		});
+	    JLabel lblTitulo = new JLabel(titulo);
+	    lblTitulo.setBounds(50, 50, 400, 30);
+	    lblTitulo.setHorizontalAlignment(JLabel.CENTER);
+	    
+	    JLabel lblTexto = new JLabel(general);
+	    lblTexto.setBounds(20, 90, 450, 30);
+	    lblTexto.setHorizontalAlignment(JLabel.CENTER);
+	    
+	    JLabel lblTextoVerde = new JLabel(verde);
+	    lblTextoVerde.setBounds(20, 120, 450, 30);
+	    lblTextoVerde.setHorizontalAlignment(JLabel.CENTER);
+	    
+	    JLabel lblTextoAmarillo = new JLabel(amarillo);
+	    lblTextoAmarillo.setBounds(20, 150, 450, 30);
+	    lblTextoAmarillo.setHorizontalAlignment(JLabel.CENTER);
+	    
+	    JLabel lblTextoGris = new JLabel(gris);
+	    lblTextoGris.setBounds(20, 180, 450, 30);
+	    lblTextoGris.setHorizontalAlignment(JLabel.CENTER);
+	    
+	    JButton btnOk = new JButton(boton);
+	    btnOk.setBounds(150, 300, 200, 40);
+	    btnOk.addActionListener(e -> mostrarMenuDificultad());
 
-		frame.getContentPane().add(lblTitulo);
-		frame.getContentPane().add(lblTexto);
-		frame.getContentPane().add(lblTextoVerde);
-		frame.getContentPane().add(lblTextoAmarillo);
-		frame.getContentPane().add(lblTextoGris);
-		frame.getContentPane().add(btnOk);
-		frame.revalidate();
-		frame.repaint();
+	    frame.getContentPane().add(lblTitulo);
+	    frame.getContentPane().add(lblTexto);
+	    frame.getContentPane().add(lblTextoVerde);
+	    frame.getContentPane().add(lblTextoAmarillo);
+	    frame.getContentPane().add(lblTextoGris);
+	    frame.getContentPane().add(btnOk);
+	    
+	    frame.revalidate();
+	    frame.repaint();
 	}
 
 	private void mostrarMenuDificultad() {
-		frame.getContentPane().removeAll();
-		
-		JButton btnFacil = new JButton("Fácil (5 letras - 8 intentos)");
-		btnFacil.setBounds(100, 100, 300, 40);
-		btnFacil.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				iniciarJuego(8, 5, "Fácil");
-			}
-		});
+	    frame.getContentPane().removeAll();
+	    
+	    String txtFacil = idiomaElegido.equals("English") ? "Easy (5 letters - 8 tries)" : "Fácil (5 letras - 8 intentos)";
+	    String txtNormal = idiomaElegido.equals("English") ? "Normal (8 letters - 5 tries)" : "Normal (8 letras - 5 intentos)";
+	    String txtDificil = idiomaElegido.equals("English") ? "Hard (10 letters - 3 tries)" : "Difícil (10 letras - 3 intentos)";
 
-		JButton btnNormal = new JButton("Normal (8 letras - 5 intentos)");
-		btnNormal.setBounds(100, 160, 300, 40);
-		btnNormal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				iniciarJuego(5, 8, "Normal");
-			}
-		});
+	    JButton btnFacil = new JButton(txtFacil);
+	    btnFacil.setBounds(100, 100, 300, 40);
+	    btnFacil.addActionListener(e -> iniciarJuego(8, 5, "Fácil"));
 
-		JButton btnDificil = new JButton("Difícil (10 letras - 3 intentos)");
-		btnDificil.setBounds(100, 220, 300, 40);
-		btnDificil.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				iniciarJuego(3, 10, "Difícil");
-			}
-		});
+	    JButton btnNormal = new JButton(txtNormal);
+	    btnNormal.setBounds(100, 160, 300, 40);
+	    btnNormal.addActionListener(e -> iniciarJuego(5, 8, "Normal"));
 
-		frame.getContentPane().add(btnFacil);
-		frame.getContentPane().add(btnNormal);
-		frame.getContentPane().add(btnDificil);
-		frame.revalidate();
-		frame.repaint();
+	    JButton btnDificil = new JButton(txtDificil);
+	    btnDificil.setBounds(100, 220, 300, 40);
+	    btnDificil.addActionListener(e -> iniciarJuego(3, 10, "Difícil"));
+
+	    frame.getContentPane().add(btnFacil);
+	    frame.getContentPane().add(btnNormal);
+	    frame.getContentPane().add(btnDificil);
+	    frame.revalidate();
+	    frame.repaint();
 	}
 
 	private void iniciarJuego(int filas, int columnas, String dificultad) {
@@ -179,9 +175,28 @@ public class InterfazGrafica {
 
 		frame.getContentPane().removeAll();
 		
+		// --- NUEVO: Configuración e inicio del temporizador ---
+				lblTemporizador = new JLabel(idiomaElegido.equals("English")? "Time: 00:00": "Tiempo: 00:00");
+				lblTemporizador.setBounds(350, 5, 120, 20); // Esquina superior derecha
+				frame.getContentPane().add(lblTemporizador);
+
+				segundosTranscurridos = 0;
+				// El Timer de Swing ejecuta el actionPerformed cada 1000 milisegundos (1 segundo)
+				temporizador = new Timer(1000, new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						segundosTranscurridos++;
+						int minutos = segundosTranscurridos / 60;
+						int segundos = segundosTranscurridos % 60;
+						// Formateamos para que siempre muestre dos dígitos (ej: 01:05)
+						lblTemporizador.setText(String.format(idiomaElegido.equals("English")? "Time: %02d:%02d": "Tiempo: %02d:%02d", minutos, segundos));
+						
+					}
+				});
+				temporizador.start(); // Inicia el conteo
+		
 		// Aca armo el panel de la grilla dependieno de la dificultad elegida
 		JPanel panelGrid = new JPanel();
-		panelGrid.setBounds(50, 20, 380, 300);
+		panelGrid.setBounds(50, 30, 380, 300);// Baje un poco el Y (de 20 a 30) para dar espacio al reloj
 		panelGrid.setLayout(new GridLayout(filas, columnas, 5, 5));
 		frame.getContentPane().add(panelGrid);
 
@@ -208,7 +223,8 @@ public class InterfazGrafica {
 			}
 		});
 		
-		btnArriesgar = new JButton("Arriesgar");
+		btnArriesgar = new JButton(idiomaElegido.equals("English") 
+		        ? "Try": "Arriesgar");
 		btnArriesgar.setBounds(210, 350, 140, 30);
 		btnArriesgar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -219,20 +235,27 @@ public class InterfazGrafica {
 		frame.getContentPane().add(btnArriesgar);
 		frame.revalidate();
 		frame.repaint();
+		
+		// Le damos foco al cuadro de texto al arrancar para no tener que hacer clic
+		txtIngreso.requestFocusInWindow();
 	}
 	
 	private void ejecutarIntento() {
 		String palabra = txtIngreso.getText().toUpperCase().trim();
 		
 		if (palabra.length() != columnasTotales) {
-			JOptionPane.showMessageDialog(frame, "La palabra tiene que tener " + columnasTotales + " letras."); 
-			return;
+		    String msg = idiomaElegido.equals("English") 
+		        ? "The word must have " + columnasTotales + " letters." 
+		        : "La palabra tiene que tener " + columnasTotales + " letras.";
+		    JOptionPane.showMessageDialog(frame, msg); 
+		    return;
 		}
 		
 		for (int i = 0; i < palabra.length(); i++) {
 			char letra = palabra.charAt(i);
 			if (!Character.isLetter(letra)) {
-				JOptionPane.showMessageDialog(frame, "Solo se permiten letras. Evite caracteres especiales."); 
+				String msg = idiomaElegido.equals("English")? "Only letters are allowed. Avoid special characters.": "Solo se permiten letras. Evite caracteres especiales.";
+				JOptionPane.showMessageDialog(frame, msg); 
 				return;
 			}
 		}
@@ -256,13 +279,29 @@ public class InterfazGrafica {
 		txtIngreso.setText("");
 
 		if (logica.isVictoria()) {
-			JOptionPane.showMessageDialog(frame, "¡Felicidades, ganaste el juego!");
-			bloquearEntrada(); 
-		} else if (logica.isJuegoTerminado()) {
-			JOptionPane.showMessageDialog(frame, "Fin del juego. La palabra correcta era: " + logica.getPalabraSecreta());
-			bloquearEntrada();
+			// --- NUEVO: Detener tiempo y mostrar mensaje de victoria ---
+						temporizador.stop();
+						String tiempoFinal = obtenerTiempoFormateado();
+						String msg = idiomaElegido.equals("English") ? "Congratulations, you won the game!!! \nYour time was: " + tiempoFinal
+								:"¡Felicidades, ganaste el juego!\nTu tiempo fue: " + tiempoFinal;
+						JOptionPane.showMessageDialog(frame, msg);
+						bloquearEntrada(); 
+					} else if (logica.isJuegoTerminado()) {
+						// --- NUEVO: Detener tiempo y mostrar mensaje de derrota ---
+						temporizador.stop();
+						String tiempoFinal = obtenerTiempoFormateado();
+						String msg = idiomaElegido.equals("English") ? "Game over. The correct word was: " + logica.getPalabraSecreta() + "\nYour time was: " + tiempoFinal
+																		:"Fin del juego. La palabra correcta era: " + logica.getPalabraSecreta() + "\nTu tiempo fue: " + tiempoFinal;
+						JOptionPane.showMessageDialog(frame, msg);
+						bloquearEntrada();
 		}
 	}
+	// --- NUEVO: Método auxiliar para no repetir código del formato del tiempo ---
+		private String obtenerTiempoFormateado() {
+			int minutos = segundosTranscurridos / 60;
+			int segundos = segundosTranscurridos % 60;
+			return String.format("%02d:%02d", minutos, segundos);
+		}
 	
 	private void bloquearEntrada() {
 		btnArriesgar.setEnabled(false);
