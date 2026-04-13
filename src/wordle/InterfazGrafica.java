@@ -97,42 +97,23 @@ public class InterfazGrafica {
 	    frame.getContentPane().removeAll();
 	    
 	    // Definición de textos según idioma
-	    String titulo = idiomaElegido.equals("English") ? "RULES" : "REGLAS";
-	    String general = idiomaElegido.equals("English") ? "Guess the hidden word." : "Adivina la palabra oculta.";
-	    String verde = idiomaElegido.equals("English") ? "Green: correct letter and position." : "Verde: letra y posición correcta.";
-	    String amarillo = idiomaElegido.equals("English") ? "Yellow: correct letter, wrong position." : "Amarillo: letra correcta, posición incorrecta.";
-	    String gris = idiomaElegido.equals("English") ? "Gray: letter not in word." : "Gris: letra no contenida.";
+	    String titulo = idiomaElegido.equals("English") ? "<html>-------------------- RULES --------------------<br><br><br>Guess the hidden word.<br><br>"
+	    											+ "Green: correct letter and position.<br><br>Yellow: correct letter, wrong position.<br><br>"
+	    											+ "Gray: letter not in word.<html>" : "<html>-------------------- REGLAS --------------------<br><br><br>"
+	    											+ "Adivina la palabra oculta.<br><br>Verde: letra y posición correcta.<br><br>"
+	    											+ "Amarillo: letra correcta, posición incorrecta.<br><br>Gris: letra no contenida.<html>";
+	 
 	    String boton = idiomaElegido.equals("English") ? "I understand (Press OK)" : "Entendido (Presione OK)";
 
 	    JLabel lblTitulo = new JLabel(titulo);
-	    lblTitulo.setBounds(50, 50, 400, 30);
+	    lblTitulo.setBounds(50, 80, 400, 150);
 	    lblTitulo.setHorizontalAlignment(JLabel.CENTER);
-	    
-	    JLabel lblTexto = new JLabel(general);
-	    lblTexto.setBounds(20, 90, 450, 30);
-	    lblTexto.setHorizontalAlignment(JLabel.CENTER);
-	    
-	    JLabel lblTextoVerde = new JLabel(verde);
-	    lblTextoVerde.setBounds(20, 120, 450, 30);
-	    lblTextoVerde.setHorizontalAlignment(JLabel.CENTER);
-	    
-	    JLabel lblTextoAmarillo = new JLabel(amarillo);
-	    lblTextoAmarillo.setBounds(20, 150, 450, 30);
-	    lblTextoAmarillo.setHorizontalAlignment(JLabel.CENTER);
-	    
-	    JLabel lblTextoGris = new JLabel(gris);
-	    lblTextoGris.setBounds(20, 180, 450, 30);
-	    lblTextoGris.setHorizontalAlignment(JLabel.CENTER);
 	    
 	    JButton btnOk = new JButton(boton);
 	    btnOk.setBounds(150, 300, 200, 40);
 	    btnOk.addActionListener(e -> mostrarMenuDificultad());
 
 	    frame.getContentPane().add(lblTitulo);
-	    frame.getContentPane().add(lblTexto);
-	    frame.getContentPane().add(lblTextoVerde);
-	    frame.getContentPane().add(lblTextoAmarillo);
-	    frame.getContentPane().add(lblTextoGris);
 	    frame.getContentPane().add(btnOk);
 	    
 	    frame.revalidate();
