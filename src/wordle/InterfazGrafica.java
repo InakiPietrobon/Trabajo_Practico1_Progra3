@@ -45,7 +45,6 @@ public class InterfazGrafica {
 	}
 
 	public InterfazGrafica() {
-		// Le doy el estilo visual de Windows
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -173,19 +172,39 @@ public class InterfazGrafica {
 						
 					}
 				});
-				temporizador.start(); // Inicia el conteo
+				
+		temporizador.start(); // Inicia el conteo
 		
-		// Aca armo el panel de la grilla dependieno de la dificultad elegida
+		JPanel cajaPrincipal = new JPanel();
+		cajaPrincipal.setBounds(50, 20, 380, 300);
+		cajaPrincipal.setLayout(null);
+		frame.getContentPane().add(cajaPrincipal);
+		
 		JPanel panelGrid = new JPanel();
-		panelGrid.setBounds(50, 30, 380, 300);// Baje un poco el Y (de 20 a 30) para dar espacio al reloj
 		panelGrid.setLayout(new GridLayout(filas, columnas, 5, 5));
-		frame.getContentPane().add(panelGrid);
 
+		// Armo la tabla dependiendo la dificultad, para que no se vea muy grande o muy chica
+		if (dificultad.equals("Fácil")) {
+			panelGrid.setBounds(100, 10, 180, 280); 
+		}
+
+		if (dificultad.equals("Normal")) {
+			panelGrid.setBounds(10, 35, 360, 230);  
+		}
+		
+		if (dificultad.equals("Difícil")) {
+			panelGrid.setBounds(15, 95, 350, 110);  
+		}
+		
+		cajaPrincipal.add(panelGrid);
+		
+		// Armo la tablita con una cantidad dependiendo las filas y columnas
 		for (int i = 0; i < filas; i++) {
 			for (int j = 0; j < columnas; j++) {
 				JLabel label = new JLabel("", JLabel.CENTER);
 				label.setOpaque(true);
 				label.setBackground(Color.LIGHT_GRAY);
+						
 				matrizGrafica[i][j] = label;
 				panelGrid.add(label);
 			}
